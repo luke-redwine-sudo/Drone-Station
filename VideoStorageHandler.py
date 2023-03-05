@@ -1,5 +1,7 @@
 import os
 import logging
+#import pirecorder
+import time
 
 import DroneStationProperties
 
@@ -41,16 +43,25 @@ class VideoStorageHandler:
 			
 			self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"
 
+			#self.startVideo()
+
 			self.initialized = True
 	
-	def write(self):
-		self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"
+	def startVideo(self):
+		self.camera = rec.set_config(rectype = "vid", viddelay = 20, vidquality = 30, viddims = (1640, 1232), vidfps = 24)
+		self.camera.record()
+		
+	def stopVideo(self):
 		self.max_video_number = self.max_video_number + 1
+		self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"
+		
+		if (self.initialized == True):
+			self.camera.stop_recording()
 
 	def shutdown(self):
 		
-		self.logger.info("Shutdown Data Storage Handler...")
+		self.logger.info("Shutdown Video Storage Handler...")
 		
 		if (self.initialized == True):
-			self.write()
+			self.stopVideo()
 			

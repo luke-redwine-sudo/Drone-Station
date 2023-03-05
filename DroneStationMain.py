@@ -34,30 +34,24 @@ root.attributes('-fullscreen',True)
 logger.info("Creating Tkinter Object...")
  
 # Specify Grid
-Grid.columnconfigure(root,0,weight=2)
-Grid.columnconfigure(root,1,weight=1)
-Grid.columnconfigure(root,3,weight=2)
+Grid.columnconfigure(root,0,weight=1)
 Grid.rowconfigure(root,0,weight=10)
-Grid.rowconfigure(root,1,weight=1)
+Grid.rowconfigure(root,1,weight=5)
 Grid.rowconfigure(root,2,weight=5)
-Grid.rowconfigure(root,3,weight=1)
-Grid.rowconfigure(root,4,weight=1)
-Grid.rowconfigure(root,5,weight=1)
+Grid.rowconfigure(root,3,weight=5)
+Grid.rowconfigure(root,4,weight=5)
 
 logger.info("Specifying Grid...")
 
 # Create Buttons
-startButton = customtkinter.CTkButton(root,text="Start Video Collection", fg_color='green',
-	command = lambda: guiHandler.startVideoCollection(), text_color="black",
-	font=("Inter", 15))
-endButton = customtkinter.CTkButton(root,text="End Video Collection", fg_color='yellow',
-	command = lambda: guiHandler.endVideoCollection(), text_color="black",
+videoButton = customtkinter.CTkButton(root,text="Start Video Collection", fg_color='green',
+	command = lambda: guiHandler.toggleVideoCollection(), text_color="black",
 	font=("Inter", 15))
 exitButton = customtkinter.CTkButton(root,text="Exit", fg_color='red',
 	command = lambda: guiHandler.shutdown(), text_color="black",
 	font=("Inter", 15))
 dronePhoneRotationButton = customtkinter.CTkButton(root,text="Start Rotation",
-	fg_color='orange', command = lambda: guiHandler.toggleDronePhoneRotation(),
+	fg_color='green', command = lambda: guiHandler.toggleDronePhoneRotation(),
 	text_color="black", font=("Inter", 15))
 
 logger.info("Creating Buttons...")
@@ -71,21 +65,18 @@ droneStationLabel = customtkinter.CTkLabel(root, text="Drone Station GUI", font=
 logging.info("Creating Image...")
 
 # Set Image grid
-logoLabel.grid(row=0,column=1,sticky="NSEW", padx=(20, 20), pady=(20, 1))
-droneStationLabel.grid(row=1,column=1,sticky="NSEW", padx=(20, 20), pady=(1, 20))
+logoLabel.grid(row=0,column=0,sticky="NSEW", padx=(20, 20), pady=(20, 1))
+droneStationLabel.grid(row=1,column=0,sticky="NSEW", padx=(20, 20), pady=(1, 20))
 
 # Set Button grid
-startButton.grid(row=2,column=0,sticky="NSEW", padx=(20, 20), pady=(20, 20))
-endButton.grid(row=2,column=1,sticky="NSEW", padx=(20, 20), pady=(20, 20))
-exitButton.grid(row=5,column=2,sticky="NSEW", padx=(20, 20), pady=(20, 20))
-dronePhoneRotationButton.grid(row=2,column=2,sticky="NSEW", padx=(20, 20), pady=(20, 20))
+videoButton.grid(row=2,column=0,sticky="NSEW", padx=(20, 20), pady=(20, 20))
+exitButton.grid(row=4,column=0,sticky="NSEW", padx=(20, 20), pady=(20, 20))
+dronePhoneRotationButton.grid(row=3,column=0,sticky="NSEW", padx=(20, 20), pady=(20, 20))
 
 # Start GUI Handler
-guiHandler = GUIHandler.GUIHandler(root, dronePhoneRotationButton)
+guiHandler = GUIHandler.GUIHandler(root, dronePhoneRotationButton, videoButton)
 
 logger.info("Enabling GUIHandler...")
-
-#guiHandler.update()
 
 # Execute tkinter
 root.mainloop()

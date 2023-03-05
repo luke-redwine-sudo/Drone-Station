@@ -10,12 +10,13 @@ properties = DroneStationProperties.DroneStationProperties()
 
 class GUIHandler:
 	
-	def __init__(self, root, dronePhoneRotationButton):
+	def __init__(self, root, dronePhoneRotationButton, videoButton):
 		
 		# Initialize self variables
 		self.root = root
 		self.dronePhoneRotationButton = dronePhoneRotationButton
-		self.collectData = False
+		self.videoButton = videoButton
+		self.isRecording = False
 		self.isRotation = False
 		
 		# Initialize logger
@@ -31,48 +32,39 @@ class GUIHandler:
 		
 		
 	def startVideoCollection(self):
-		# Initialize Sensors
+		# Initialize Camera
 		self.logger.info("Starting Video Collection...")
-		self.setCollectVideo(True)
-		self.DroneStationHandler.initializeDroneStation()
+		
+		if (self.VideoStorageHandler.initialized is not True):
+			self.VideoStorageHandler.initializeVideoStorage()
+		
+		self.VideoStorageHandler.startVideo()
 		
 	def endVideoCollection(self):
-		# Shutdown sensors
+		# Shutdown Camera
 		self.logger.info("Ending Data Collection...")
-		self.setCollectVideo(False)
-
-	def update(self):
-		# Poll the sensors and update the read outs
-		self.logger.debug("Updating Read outs...")
-		
-		# Only poll the sensors if data collection has started
-		if (self.collectVideo == True):
-			temperature, humidity, pressure = self.updateBMESensor()
-			UV = self.updateUVSensor()
-			windDirection, windSpeed = self.updateWindSensor()
-			self.VideoStorageHandler.write()
-			
-		self.root.after(properties.getCollectionFrequency(), self.update)
-		
-	def setCollectVideo(self, collect):
-		# Set collect video
-		self.collectVideo = collect
-		self.VideoStorageHandler.initializeVideoStorage()
-		
-	def getCollectVideo(self):
-		# Return the current collection status
-		return self.CollectVideo
+		self.VideoStorageHandler.stopVideo()
 		
 	def toggleDronePhoneRotation(self):
 		if (self.isRotation):
 			self.stopDronePhoneRotation()
-			self.dronePhoneRotationButton.configure(text="Start Rotation", fg_color='orange')
+			self.dronePhoneRotationButton.configure(text="Start Rotation", fg_color='green')
 		else:
 			self.startDronePhoneRotation()
-			self.dronePhoneRotationButton.configure(text="Stop Rotation", fg_color='red')
+			self.dronePhoneRotationButton.configure(text="Stop Rotation", fg_color='orange')
 			
 		self.isRotation = not self.isRotation
 	
+	def toggleVideoCollection(self):
+		if (self.isRecording):
+			self.stopVideoCollection()
+			self.videoButton.configure(text="Start Recording", fg_color='green')
+		else:
+			self.startVideoCollection()
+			self.videoButton.configure(text="Stop Recording", fg_color='orange')
+			
+		self.isRecording = not self.isRecording
+		
 	def startDronePhoneRotation(self):
 		self.DroneStationHandler.startRotation()
 		
