@@ -21,7 +21,10 @@ class DroneStationHandler:
 		
 		if (self.initialized == False):
 			self.initialized = True
-		
+	
+	def evaluateRotation(self):
+		self.logger.info("Rotate")
+	
 	def startRotation(self):
 		self.logger.info("Start Rotating Drone Station...")
 

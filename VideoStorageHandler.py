@@ -1,7 +1,10 @@
 import os
 import logging
-#import pirecorder
 import time
+import subprocess
+import shlex
+import signal
+import multiprocessing
 
 import DroneStationProperties
 
@@ -22,41 +25,55 @@ class VideoStorageHandler:
 		
 		self.camera = None
 		
+		self.recordingProcess = None
+		
+		self.camerapid = None
+		
 		
 	def initializeVideoStorage(self):
 		
 		if (self.initialized == False):
-			self.folder = str(properties.getVideoFolder())
-			self.max_video_number = 1
-			
-			if (os.path.isdir(self.folder)):
-				dir_list = os.listdir(self.folder)
-				
-				for f in dir_list:
-					self.logger.info(f)
-					if (str(properties.getVideoFilePrefix()) in f and int(f.split("_")[1].split(".")[0]) >= self.max_video_number):
-						self.logger.info("Increasing Log Level...")
-						self.max_video_number = int(f.split("_")[1].split(".")[0]) + 1
-				
-			else:
-				os.makedirs(self.folder)
-			
-			self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"
-
-			#self.startVideo()
-
+			self.updateFolderNumber()
 			self.initialized = True
 	
-	def startVideo(self):
-		self.camera = rec.set_config(rectype = "vid", viddelay = 20, vidquality = 30, viddims = (1640, 1232), vidfps = 24)
-		self.camera.record()
+	def updateFolderNumber(self):
+		self.folder = str(properties.getVideoFolder())
+		self.max_video_number = 1
+			
+		if (os.path.isdir(self.folder)):
+			dir_list = os.listdir(self.folder)
+			
+			for f in dir_list:
+				self.logger.info(f)
+				if (str(properties.getVideoFilePrefix()) in f and int(f.split("_")[1].split(".")[0]) >= self.max_video_number):
+					self.logger.info("Increasing Video Level...")
+					self.max_video_number = int(f.split("_")[1].split(".")[0]) + 1
+				else:
+					os.makedirs(self.folder)
 		
-	def stopVideo(self):
-		self.max_video_number = self.max_video_number + 1
-		self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"
+		self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"		
+	
+	def startVideoCollection(self):
 		
 		if (self.initialized == True):
-			self.camera.stop_recording()
+			self.updateFolderNumber()
+		
+		cmd_str = "ffmpeg -f video4linux2 -framerate 22.5 -s 640x480 -i /dev/video0 out78.avi"
+		self.camera = subprocess.Popen(shlex.split(cmd_str), stdout=subprocess.DEVNULL, shell=False)
+		self.camerapid = self.camera.pid
+		self.recordingProcess = multiprocessing.Process(target=self.startVideo)
+		self.recordingProcess.start()
+	
+	def stopVideoCollection(self):
+		self.stopVideo()
+	
+	def startVideo(self):
+		self.camera.wait()
+		
+	def stopVideo(self):
+		if (self.initialized == True):
+			self.camera.terminate()
+			
 
 	def shutdown(self):
 		

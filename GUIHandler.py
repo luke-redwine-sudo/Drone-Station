@@ -35,15 +35,15 @@ class GUIHandler:
 		# Initialize Camera
 		self.logger.info("Starting Video Collection...")
 		
-		if (self.VideoStorageHandler.initialized is not True):
+		if (self.VideoStorageHandler.initialized is False):
 			self.VideoStorageHandler.initializeVideoStorage()
 		
-		self.VideoStorageHandler.startVideo()
+		self.VideoStorageHandler.startVideoCollection()
 		
-	def endVideoCollection(self):
+	def stopVideoCollection(self):
 		# Shutdown Camera
-		self.logger.info("Ending Data Collection...")
-		self.VideoStorageHandler.stopVideo()
+		self.logger.info("Ending Video Collection...")
+		self.VideoStorageHandler.stopVideoCollection()
 		
 	def toggleDronePhoneRotation(self):
 		if (self.isRotation):
@@ -71,6 +71,9 @@ class GUIHandler:
 	def stopDronePhoneRotation(self):
 		self.DroneStationHandler.stopRotation()
 		
+	def update(self):
+		self.DroneStationHandler.evaluateRotation()
+	
 	def shutdown(self):
 		self.logger.info("Commense Shutdown...")
 		

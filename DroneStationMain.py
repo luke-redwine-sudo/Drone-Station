@@ -76,6 +76,8 @@ dronePhoneRotationButton.grid(row=3,column=0,sticky="NSEW", padx=(20, 20), pady=
 # Start GUI Handler
 guiHandler = GUIHandler.GUIHandler(root, dronePhoneRotationButton, videoButton)
 
+guiHandler.update()
+
 logger.info("Enabling GUIHandler...")
 
 # Execute tkinter
