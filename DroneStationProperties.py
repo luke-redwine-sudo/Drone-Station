@@ -19,4 +19,17 @@ class DroneStationProperties:
 	def getVideoFilePrefix(self):
 		return self.configs.get("dronestation.video_file_prefix").data
 		
-
+	def getCommandString(self):
+		return self.configs.get("dronestation.command_string").data
+		
+	def getFramerate(self):
+		return self.configs.get("dronestation.framerate").data
+		
+	def getResolution(self):
+		return self.configs.get("dronestation.resolution").data
+		
+	def getSource(self):
+		return self.configs.get("dronestation.source").data
+		
+	def getTotalCommandString(self):
+		return self.getCommandString() + " " + self.getFramerate() + " -s " + self.getResolution() + " -i " + self.getSource()

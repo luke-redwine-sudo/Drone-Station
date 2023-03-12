@@ -30,6 +30,8 @@ class VideoStorageHandler:
 		self.camerapid = None
 		
 		
+		
+		
 	def initializeVideoStorage(self):
 		
 		if (self.initialized == False):
@@ -48,18 +50,19 @@ class VideoStorageHandler:
 				if (str(properties.getVideoFilePrefix()) in f and int(f.split("_")[1].split(".")[0]) >= self.max_video_number):
 					self.logger.info("Increasing Video Level...")
 					self.max_video_number = int(f.split("_")[1].split(".")[0]) + 1
-				else:
+				elif(os.path.exists(self.folder) == False):
 					os.makedirs(self.folder)
 		
-		self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".mp4"		
+		self.filename = self.folder + str(properties.getVideoFilePrefix()) + "_{0:0=2d}".format(self.max_video_number) + ".avi"	
+		
+		self.commandString = "ffmpeg -f video4linux2 -framerate 22.5 -s 640x480 -i /dev/video0 " + self.filename
 	
 	def startVideoCollection(self):
 		
 		if (self.initialized == True):
 			self.updateFolderNumber()
 		
-		cmd_str = "ffmpeg -f video4linux2 -framerate 22.5 -s 640x480 -i /dev/video0 out78.avi"
-		self.camera = subprocess.Popen(shlex.split(cmd_str), stdout=subprocess.DEVNULL, shell=False)
+		self.camera = subprocess.Popen(shlex.split(self.commandString), stdout=subprocess.DEVNULL, shell=False)
 		self.camerapid = self.camera.pid
 		self.recordingProcess = multiprocessing.Process(target=self.startVideo)
 		self.recordingProcess.start()
