@@ -33,3 +33,9 @@ class DroneStationProperties:
 		
 	def getTotalCommandString(self):
 		return self.getCommandString() + " " + self.getFramerate() + " -s " + self.getResolution() + " -i " + self.getSource()
+
+	def getStepPin(self):
+		return self.configs.get("dronestation.step_pin").data
+		
+	def getDirectionPin(self):
+		return self.configs.get("dronestation.direction_pin").data
