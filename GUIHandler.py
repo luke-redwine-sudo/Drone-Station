@@ -46,6 +46,10 @@ class GUIHandler:
 		self.VideoStorageHandler.stopVideoCollection()
 		
 	def toggleDronePhoneRotation(self):
+		
+		if (self.DroneStationHandler.initialized is False):
+			self.DroneStationHandler.initializeDroneStation()
+		
 		if (self.isRotation):
 			self.stopDronePhoneRotation()
 			self.dronePhoneRotationButton.configure(text="Start Rotation", fg_color='green')
@@ -73,6 +77,7 @@ class GUIHandler:
 		
 	def update(self):
 		self.DroneStationHandler.evaluateRotation()
+		self.root.after(properties.getStepperFrequency(), self.update)
 	
 	def shutdown(self):
 		self.logger.info("Commense Shutdown...")
