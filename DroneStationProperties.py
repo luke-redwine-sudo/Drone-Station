@@ -39,3 +39,9 @@ class DroneStationProperties:
 		
 	def getDirectionPin(self):
 		return self.configs.get("dronestation.direction_pin").data
+	
+	def getEnablePin(self):
+		return self.configs.get("dronestation.enable_pin").data
+		
+	def getStepperFrequency(self):
+		return self.configs.get("dronestation.stepper_frequency").data
